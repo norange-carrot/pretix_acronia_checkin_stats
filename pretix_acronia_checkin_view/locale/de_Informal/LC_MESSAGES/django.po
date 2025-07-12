@@ -1,0 +1,99 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-03-07 19:01+0100\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Nora Küchler\n"
+"Language-Team: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Pretix Acronia Checkin View"
+msgstr "Pretix Acronia Check-in Ansicht"
+
+msgid "Pretix plugin to create an extra view to check helper add-on check-ins"
+msgstr "Pretix Plugin zur Erstellung einer zusätzlichen Ansicht für Helper Add-on Check-ins"
+
+msgid "Check-in Statistics"
+msgstr "Check-in Statistiken"
+
+msgid "Summary"
+msgstr "Zusammenfassung"
+
+msgid "Total persons with check-ins:"
+msgstr "Gesamtzahl Personen mit Check-ins:"
+
+msgid "Total check-ins:"
+msgstr "Gesamtzahl Check-ins:"
+
+msgid "Check-ins per Person"
+msgstr "Check-ins pro Person"
+
+msgid "Order"
+msgstr "Bestellung"
+
+msgid "Position"
+msgstr "Position"
+
+msgid "Product"
+msgstr "Produkt"
+
+msgid "Attendee Name"
+msgstr "Teilnehmername"
+
+msgid "Email"
+msgstr "E-Mail"
+
+msgid "Check-ins"
+msgstr "Check-ins"
+
+msgid "Actions"
+msgstr "Aktionen"
+
+msgid "No name provided"
+msgstr "Kein Name angegeben"
+
+msgid "No email provided"
+msgstr "Keine E-Mail angegeben"
+
+msgid "Multiple check-ins detected"
+msgstr "Mehrfache Check-ins erkannt"
+
+msgid "Single check-in"
+msgstr "Einzelner Check-in"
+
+msgid "View Details"
+msgstr "Details anzeigen"
+
+msgid "Page navigation"
+msgstr "Seitennavigation"
+
+msgid "Previous"
+msgstr "Zurück"
+
+msgid "Next"
+msgstr "Weiter"
+
+msgid "No check-ins found matching your search criteria."
+msgstr "Keine Check-ins gefunden, die deinen Suchkriterien entsprechen."
+
+msgid "No check-ins found for this event yet."
+msgstr "Noch keine Check-ins für diese Veranstaltung gefunden."
+
+msgid "Multiple check-ins:"
+msgstr "Mehrfache Check-ins:"
+
+msgid "Search"
+msgstr "Suchen"
+
+msgid "Search by order, name, email, or product..."
+msgstr "Suche nach Bestellung, Name, E-Mail oder Produkt..."
+
+msgid "Clear"
+msgstr "Zurücksetzen"
+
+msgid "Showing results for \"%s\""
+msgstr "Zeige Ergebnisse für \"%s\""

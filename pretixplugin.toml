@@ -1,0 +1,5 @@
+[plugin]
+package = "pretix-acronia-checkin-view"
+modules = [ "pretix_acronia_checkin_view" ]
+marketplace_name = "acronia-checkin-view"
+

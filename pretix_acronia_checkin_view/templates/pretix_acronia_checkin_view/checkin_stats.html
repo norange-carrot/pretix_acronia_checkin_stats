@@ -1,0 +1,218 @@
+{% extends "pretixcontrol/event/base.html" %}
+{% load i18n %}
+{% load bootstrap3 %}
+
+{% block title %}{% trans "Check-in Statistics" %} :: {% endblock %}
+
+{% block content %}
+    <h1>{% trans "Check-in Statistics" %}</h1>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{% trans "Summary" %}</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="stat-box">
+                                <strong>{% trans "Total persons with check-ins:" %}</strong>
+                                <span class="badge badge-info">{{ total_positions }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-box">
+                                <strong>{% trans "Total check-ins:" %}</strong>
+                                <span class="badge badge-success">{{ total_checkins }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-box">
+                                <strong>{% trans "Multiple check-ins:" %}</strong>
+                                <span class="badge badge-warning">{{ multiple_checkins }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{% trans "Check-ins per Person" %}</h3>
+                </div>
+                <div class="panel-body">
+                    <!-- Search form -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <form method="get" class="form-inline">
+                                <div class="form-group">
+                                    <label for="search" class="sr-only">{% trans "Search" %}</label>
+                                    <input type="text" class="form-control" id="search" name="search" 
+                                           placeholder="{% trans 'Search by order, name, email, or product...' %}" 
+                                           value="{{ search_query }}" style="width: 300px;">
+                                </div>
+                                <button type="submit" class="btn btn-default">
+                                    <i class="fa fa-search"></i> {% trans "Search" %}
+                                </button>
+                                {% if search_query %}
+                                    <a href="?" class="btn btn-default">
+                                        <i class="fa fa-times"></i> {% trans "Clear" %}
+                                    </a>
+                                {% endif %}
+                            </form>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            {% if search_query %}
+                                <small class="text-muted">
+                                    {% blocktrans with query=search_query %}Showing results for "{{ query }}"{% endblocktrans %}
+                                </small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    {% if stats %}
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>{% trans "Order" %}</th>
+                                        <th>{% trans "Position" %}</th>
+                                        <th>{% trans "Product" %}</th>
+                                        <th>{% trans "Attendee Name" %}</th>
+                                        <th>{% trans "Email" %}</th>
+                                        <th class="text-center">{% trans "Check-ins" %}</th>
+                                        <th>{% trans "Actions" %}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for position in stats %}
+                                        <tr {% if position.checkin_count > 1 %}class="warning"{% endif %}>
+                                            <td>
+                                                {{ position.order.code }}
+                                            </td>
+                                            <td>{{ position.positionid }}</td>
+                                            <td>
+                                                {{ position.item.name }}
+                                                {% if position.variation %}
+                                                    – {{ position.variation.value }}
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if position.attendee_name %}
+                                                    {{ position.attendee_name }}
+                                                {% else %}
+                                                    <em class="text-muted">{% trans "No name provided" %}</em>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if position.attendee_email %}
+                                                    {{ position.attendee_email }}
+                                                {% else %}
+                                                    <em class="text-muted">{% trans "No email provided" %}</em>
+                                                {% endif %}
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge {% if position.checkin_count > 1 %}badge-warning{% else %}badge-success{% endif %}" 
+                                                      title="{% if position.checkin_count > 1 %}{% trans 'Multiple check-ins detected' %}{% else %}{% trans 'Single check-in' %}{% endif %}">
+                                                    {{ position.checkin_count }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="btn btn-sm btn-default disabled">
+                                                    {% trans "View Details" %}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Pagination -->
+                        {% if is_paginated %}
+                            <nav aria-label="{% trans 'Page navigation' %}">
+                                <ul class="pagination">
+                                    {% if page_obj.has_previous %}
+                                        <li>
+                                            <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="{% trans 'Previous' %}">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                    
+                                    {% for num in page_obj.paginator.page_range %}
+                                        {% if page_obj.number == num %}
+                                            <li class="active"><span>{{ num }}</span></li>
+                                        {% else %}
+                                            <li><a href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a></li>
+                                        {% endif %}
+                                    {% endfor %}
+                                    
+                                    {% if page_obj.has_next %}
+                                        <li>
+                                            <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="{% trans 'Next' %}">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-info">
+                            {% if search_query %}
+                                {% trans "No check-ins found matching your search criteria." %}
+                            {% else %}
+                                {% trans "No check-ins found for this event yet." %}
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.stat-box {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+}
+
+.badge-warning {
+    background-color: #f0ad4e;
+}
+
+.badge-success {
+    background-color: #5cb85c;
+}
+
+.badge-info {
+    background-color: #5bc0de;
+}
+
+.table tr.warning {
+    background-color: #fcf8e3;
+}
+
+.form-inline .form-group {
+    margin-right: 10px;
+}
+
+.pagination {
+    margin: 20px 0;
+}
+</style>
+{% endblock %}

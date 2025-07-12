@@ -1,0 +1,42 @@
+[project]
+name = "pretix-acronia-checkin-view"
+dynamic = ["version"]
+description = "Pretix plugin to create an extra view to check helper add-on check-ins"
+readme = "README.rst"
+license = {text = "pretix Enterprise"}
+keywords = ["pretix"]
+authors = [
+    {name = "Nora Küchler", email = "n.kuechler@posteo.de"},
+]
+maintainers = [
+    {name = "Nora Küchler", email = "n.kuechler@posteo.de"},
+]
+
+dependencies = [
+]
+
+[project.entry-points."pretix.plugin"]
+pretix_acronia_checkin_view = "pretix_acronia_checkin_view:PretixPluginMeta"
+
+[project.entry-points."distutils.commands"]
+build = "pretix_plugin_build.build:CustomBuild"
+
+[build-system]
+requires = [
+    "setuptools",
+    "pretix-plugin-build",
+]
+
+[project.urls]
+homepage = "GitHub repository URL"
+repository = "GitHub repository URL"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.dynamic]
+version = {attr = "pretix_acronia_checkin_view.__version__"}
+
+[tool.setuptools.packages.find]
+include = ["pretix*"]
+namespaces = false
