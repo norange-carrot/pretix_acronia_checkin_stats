@@ -1,4 +1,4 @@
-from django.db.models import Count, Q
+from django.db.models import Count, Q, F
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView
 from pretix.base.models import Checkin, OrderPosition
@@ -16,29 +16,57 @@ class CheckinStatsView(EventPermissionRequiredMixin, ListView):
     paginate_by = 50
     
     def get_queryset(self):
-        # Get all order positions for this event that have at least one checkin
-        # and annotate with checkin count
+        # Get all order positions for this event that are eligible for checkin-list with ID 3
+        # Show all positions regardless of check-in status
+        from pretix.base.models import CheckinList
+        
+        try:
+            checkin_list = CheckinList.objects.get(id=3, event=self.request.event)
+        except CheckinList.DoesNotExist:
+            # If checkin list doesn't exist, return empty queryset
+            return OrderPosition.objects.none()
+        
+        # Get all positions that match the checkin list criteria
         queryset = OrderPosition.objects.filter(
             order__event=self.request.event,
-            all_checkins__isnull=False
+            order__status__in=checkin_list.include_pending and ['p', 'n'] or ['p'],
+            item__in=checkin_list.limit_products.all() if checkin_list.limit_products.exists() else self.request.event.items.all()
         ).select_related(
             'item', 'variation', 'order'
         ).prefetch_related(
-            'all_checkins'
+            'all_checkins', 'addons'
         ).annotate(
-            checkin_count=Count('all_checkins', distinct=True)
-        ).order_by('-checkin_count', 'order__code', 'positionid')
+            checkin_count=Count('all_checkins', filter=Q(all_checkins__list_id=3), distinct=True),
+            addon_count=Count('addons', filter=Q(addons__item_id__in=[4, 7]), distinct=True),
+            missing_duties=F('addon_count') - F('checkin_count')
+        ).order_by('-missing_duties', 'order__code')
         
         # Filter by search query if provided
         search = self.request.GET.get('search', '').strip()
         if search:
             queryset = queryset.filter(
                 Q(order__code__icontains=search) |
-                Q(attendee_name__icontains=search) |
+                Q(attendee_name_cached__icontains=search) |
                 Q(attendee_email__icontains=search) |
                 Q(item__name__icontains=search)
             )
         
+        # Filter by missing duties status
+        missing_filter = self.request.GET.get('missing_filter', '')
+        if missing_filter == 'missing':
+            queryset = queryset.filter(missing_duties__gt=0)
+        elif missing_filter == 'complete':
+            queryset = queryset.filter(missing_duties=0)
+        elif missing_filter == 'extra':
+            queryset = queryset.filter(missing_duties__lt=0)
+        
+        # Filter by check-in status
+        checkin_filter = self.request.GET.get('checkin_filter', '')
+        if checkin_filter == 'none':
+            queryset = queryset.filter(checkin_count=0)
+        elif checkin_filter == 'at_least_one':
+            queryset = queryset.filter(checkin_count__gt=0)
+
         return queryset
     
     def get_context_data(self, **kwargs):
@@ -60,6 +88,8 @@ class CheckinStatsView(EventPermissionRequiredMixin, ListView):
             'multiple_checkins': multiple_checkins,
             'event': self.request.event,
             'search_query': self.request.GET.get('search', ''),
+            'missing_filter': self.request.GET.get('missing_filter', ''),
+            'checkin_filter': self.request.GET.get('checkin_filter', ''),
         })
         
         return context

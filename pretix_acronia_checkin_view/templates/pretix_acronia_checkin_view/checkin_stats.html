@@ -2,10 +2,10 @@
 {% load i18n %}
 {% load bootstrap3 %}
 
-{% block title %}{% trans "Check-in Statistics" %} :: {% endblock %}
+{% block title %}{% trans "Check-in Helper Statistics" %} :: {% endblock %}
 
 {% block content %}
-    <h1>{% trans "Check-in Statistics" %}</h1>
+    <h1>{% trans "Check-in Helper Statistics" %}</h1>
     
     <div class="row">
         <div class="col-md-12">
@@ -46,30 +46,55 @@
                     <h3 class="panel-title">{% trans "Check-ins per Person" %}</h3>
                 </div>
                 <div class="panel-body">
-                    <!-- Search form -->
+                    <!-- Search and Filter form -->
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-8">
                             <form method="get" class="form-inline">
                                 <div class="form-group">
                                     <label for="search" class="sr-only">{% trans "Search" %}</label>
                                     <input type="text" class="form-control" id="search" name="search" 
                                            placeholder="{% trans 'Search by order, name, email, or product...' %}" 
-                                           value="{{ search_query }}" style="width: 300px;">
+                                           value="{{ search_query }}" style="width: 250px;">
                                 </div>
+                                
+                                <!-- Filter by Missing Duties -->
+                                <div class="form-group">
+                                    <select name="missing_filter" class="form-control">
+                                        <option value="">{% trans "All duties" %}</option>
+                                        <option value="missing" {% if missing_filter == 'missing' %}selected{% endif %}>{% trans "Missing duties only" %}</option>
+                                        <option value="complete" {% if missing_filter == 'complete' %}selected{% endif %}>{% trans "Complete only" %}</option>
+                                        <option value="extra" {% if missing_filter == 'extra' %}selected{% endif %}>{% trans "Extra check-ins only" %}</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Filter by Check-in Status -->
+                                <div class="form-group">
+                                    <select name="checkin_filter" class="form-control">
+                                        <option value="">{% trans "All check-ins" %}</option>
+                                        <option value="none" {% if checkin_filter == 'none' %}selected{% endif %}>{% trans "No check-ins" %}</option>
+                                        <option value="at_least_one" {% if checkin_filter == 'at_least_one' %}selected{% endif %}>{% trans "At least one check-in" %}</option>
+                                    </select>
+                                </div>
+                                
                                 <button type="submit" class="btn btn-default">
-                                    <i class="fa fa-search"></i> {% trans "Search" %}
+                                    <i class="fa fa-search"></i> {% trans "Filter" %}
                                 </button>
-                                {% if search_query %}
+                                {% if search_query or missing_filter or checkin_filter %}
                                     <a href="?" class="btn btn-default">
                                         <i class="fa fa-times"></i> {% trans "Clear" %}
                                     </a>
                                 {% endif %}
                             </form>
                         </div>
-                        <div class="col-md-6 text-right">
-                            {% if search_query %}
+                        <div class="col-md-4 text-right">
+                            {% if search_query or missing_filter or checkin_filter %}
                                 <small class="text-muted">
-                                    {% blocktrans with query=search_query %}Showing results for "{{ query }}"{% endblocktrans %}
+                                    {% if search_query %}
+                                        {% blocktrans with query=search_query %}Search: "{{ query }}"{% endblocktrans %}<br>
+                                    {% endif %}
+                                    {% if missing_filter or checkin_filter %}
+                                        {% trans "Filters applied" %}
+                                    {% endif %}
                                 </small>
                             {% endif %}
                         </div>
@@ -83,12 +108,12 @@
                                 <thead>
                                     <tr>
                                         <th>{% trans "Order" %}</th>
-                                        <th>{% trans "Position" %}</th>
                                         <th>{% trans "Product" %}</th>
                                         <th>{% trans "Attendee Name" %}</th>
                                         <th>{% trans "Email" %}</th>
+                                        <th class="text-center">{% trans "Booked" %}</th>
                                         <th class="text-center">{% trans "Check-ins" %}</th>
-                                        <th>{% trans "Actions" %}</th>
+                                        <th class="text-center">{% trans "Missing helper duties" %}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -97,7 +122,6 @@
                                             <td>
                                                 {{ position.order.code }}
                                             </td>
-                                            <td>{{ position.positionid }}</td>
                                             <td>
                                                 {{ position.item.name }}
                                                 {% if position.variation %}
@@ -119,14 +143,20 @@
                                                 {% endif %}
                                             </td>
                                             <td class="text-center">
+                                                <span class="badge badge-info">
+                                                    {{ position.addon_count }}
+                                                </span>
+                                            </td>
+                                            <td class="text-center">
                                                 <span class="badge {% if position.checkin_count > 1 %}badge-warning{% else %}badge-success{% endif %}" 
                                                       title="{% if position.checkin_count > 1 %}{% trans 'Multiple check-ins detected' %}{% else %}{% trans 'Single check-in' %}{% endif %}">
                                                     {{ position.checkin_count }}
                                                 </span>
                                             </td>
-                                            <td>
-                                                <span class="btn btn-sm btn-default disabled">
-                                                    {% trans "View Details" %}
+                                            <td class="text-center">
+                                                <span class="badge {% if position.missing_duties > 0 %}badge-danger{% elif position.missing_duties < 0 %}badge-warning{% else %}badge-success{% endif %}"
+                                                      title="{% if position.missing_duties > 0 %}{% trans 'Missing duties' %}{% elif position.missing_duties < 0 %}{% trans 'Extra check-ins' %}{% else %}{% trans 'Complete' %}{% endif %}">
+                                                    {{ position.missing_duties }}
                                                 </span>
                                             </td>
                                         </tr>
@@ -141,7 +171,7 @@
                                 <ul class="pagination">
                                     {% if page_obj.has_previous %}
                                         <li>
-                                            <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="{% trans 'Previous' %}">
+                                            <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if missing_filter %}&missing_filter={{ missing_filter }}{% endif %}{% if checkin_filter %}&checkin_filter={{ checkin_filter }}{% endif %}" aria-label="{% trans 'Previous' %}">
                                                 <span aria-hidden="true">&laquo;</span>
                                             </a>
                                         </li>
@@ -151,13 +181,13 @@
                                         {% if page_obj.number == num %}
                                             <li class="active"><span>{{ num }}</span></li>
                                         {% else %}
-                                            <li><a href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a></li>
+                                            <li><a href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if missing_filter %}&missing_filter={{ missing_filter }}{% endif %}{% if checkin_filter %}&checkin_filter={{ checkin_filter }}{% endif %}">{{ num }}</a></li>
                                         {% endif %}
                                     {% endfor %}
                                     
                                     {% if page_obj.has_next %}
                                         <li>
-                                            <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" aria-label="{% trans 'Next' %}">
+                                            <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if missing_filter %}&missing_filter={{ missing_filter }}{% endif %}{% if checkin_filter %}&checkin_filter={{ checkin_filter }}{% endif %}" aria-label="{% trans 'Next' %}">
                                                 <span aria-hidden="true">&raquo;</span>
                                             </a>
                                         </li>

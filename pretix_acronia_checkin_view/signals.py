@@ -15,8 +15,12 @@ def control_nav_import(sender, request=None, **kwargs):
     
     return [
         {
-            'label': _('Check-in Statistics'),
+            'label': _('Check-in Helper Statistics'),
             'url': reverse('plugins:pretix_acronia_checkin_view:checkin_stats', kwargs={
+                'event': request.event.slug,
+                'organizer': request.organizer.slug,
+            }),
+            'parent': reverse('control:event.orders.checkinlists', kwargs={
                 'event': request.event.slug,
                 'organizer': request.organizer.slug,
             }),

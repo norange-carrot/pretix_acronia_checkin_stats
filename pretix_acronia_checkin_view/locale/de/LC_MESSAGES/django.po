@@ -20,6 +20,9 @@ msgstr "Pretix Plugin zur Erstellung einer zusätzlichen Ansicht für Helper Add
 msgid "Check-in Statistics"
 msgstr "Check-in Statistiken"
 
+msgid "Check-in Helper Statistics"
+msgstr "Check-in Helper Statistiken"
+
 msgid "Summary"
 msgstr "Zusammenfassung"
 
@@ -44,6 +47,33 @@ msgstr "Suche nach Bestellung, Name, E-Mail oder Produkt..."
 msgid "Clear"
 msgstr "Zurücksetzen"
 
+msgid "Filter"
+msgstr "Filtern"
+
+msgid "All duties"
+msgstr "Alle Dienste"
+
+msgid "Missing duties only"
+msgstr "Nur fehlende Dienste"
+
+msgid "Complete only"
+msgstr "Nur vollständige"
+
+msgid "Extra check-ins only"
+msgstr "Nur zusätzliche Check-ins"
+
+msgid "All check-ins"
+msgstr "Alle Check-ins"
+
+msgid "No check-ins"
+msgstr "Keine Check-ins"
+
+msgid "At least one check-in"
+msgstr "Mindestens ein Check-in"
+
+msgid "Filters applied"
+msgstr "Filter angewendet"
+
 msgid "Showing results for \"%s\""
 msgstr "Zeige Ergebnisse für \"%s\""
 
@@ -64,6 +94,21 @@ msgstr "E-Mail"
 
 msgid "Check-ins"
 msgstr "Check-ins"
+
+msgid "Booked"
+msgstr "Gebucht"
+
+msgid "Missing helper duties"
+msgstr "Fehlende Helferdienste"
+
+msgid "Missing duties"
+msgstr "Fehlende Dienste"
+
+msgid "Extra check-ins"
+msgstr "Zusätzliche Check-ins"
+
+msgid "Complete"
+msgstr "Vollständig"
 
 msgid "Actions"
 msgstr "Aktionen"
