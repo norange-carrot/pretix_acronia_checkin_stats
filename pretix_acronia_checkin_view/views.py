@@ -167,7 +167,7 @@ class CheckinStatsView(EventPermissionRequiredMixin, ListView):
         """Calculate statistics from all positions."""
         total_positions = all_positions.count()
         total_checkins = sum(pos.checkin_count for pos in all_positions)
-        
+
         # Statistics for helper duties
         completed_duties = all_positions.filter(missing_duties__lte=0).count()
         missing_duties = all_positions.filter(missing_duties__gt=0).count()
