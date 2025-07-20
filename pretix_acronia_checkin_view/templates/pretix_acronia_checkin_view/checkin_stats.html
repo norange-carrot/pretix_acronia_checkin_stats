@@ -130,7 +130,9 @@
                                     {% for position in stats %}
                                         <tr {% if position.checkin_count > 1 %}class="warning"{% endif %}>
                                             <td>
-                                                {{ position.order.code }}
+                                                <a href="{% url 'control:event.order' event=request.event.slug organizer=request.event.organizer.slug code=position.order.code %}">
+                                                    {{ position.order.code }}
+                                                </a>
                                             </td>
                                             <td>
                                                 {{ position.item.name }}
