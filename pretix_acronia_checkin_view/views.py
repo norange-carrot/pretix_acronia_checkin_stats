@@ -3,7 +3,7 @@ from django.db.models import Count, F, Q
 from django.http import HttpResponse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView
-from pretix.base.models import Checkin, OrderPosition
+from pretix.base.models import OrderPosition
 from pretix.control.views.event import EventPermissionRequiredMixin
 
 
