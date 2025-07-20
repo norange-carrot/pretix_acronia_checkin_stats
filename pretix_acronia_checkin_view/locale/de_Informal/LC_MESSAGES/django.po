@@ -142,3 +142,15 @@ msgstr "Filter angewendet"
 
 msgid "Showing results for \"%s\""
 msgstr "Zeige Ergebnisse für \"%s\""
+
+msgid "Export as CSV"
+msgstr "Als CSV exportieren"
+
+msgid "Order Code"
+msgstr "Bestellcode"
+
+msgid "Variation"
+msgstr "Variante"
+
+msgid "Booked Addons"
+msgstr "Gebuchte Add-ons"

@@ -1,4 +1,6 @@
+import csv
 from django.db.models import Count, Q, F
+from django.http import HttpResponse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView
 from pretix.base.models import Checkin, OrderPosition
@@ -14,6 +16,56 @@ class CheckinStatsView(EventPermissionRequiredMixin, ListView):
     context_object_name = 'stats'
     permission = 'can_view_orders'
     paginate_by = 50
+    
+    def get(self, request, *args, **kwargs):
+        """Handle GET requests, including CSV export."""
+        if request.GET.get('export') == 'csv':
+            return self.export_csv()
+        return super().get(request, *args, **kwargs)
+    
+    def export_csv(self):
+        """Export the current filtered data as CSV."""
+        # Get all data without pagination for export
+        original_paginate_by = self.paginate_by
+        self.paginate_by = None
+        
+        queryset = self.get_queryset()
+        
+        # Restore pagination
+        self.paginate_by = original_paginate_by
+        
+        # Create the HttpResponse object with CSV header
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="checkin_helper_statistics_{self.request.event.slug}.csv"'
+        
+        writer = csv.writer(response)
+        
+        # Write headers
+        writer.writerow([
+            _('Order Code'),
+            _('Product'),
+            _('Variation'),
+            _('Attendee Name'),
+            _('Email'),
+            _('Booked Addons'),
+            _('Check-ins'),
+            _('Missing Helper Duties'),
+        ])
+        
+        # Write data
+        for position in queryset:
+            writer.writerow([
+                position.order.code,
+                position.item.name,
+                position.variation.value if position.variation else '',
+                position.attendee_name or '',
+                position.attendee_email or '',
+                position.addon_count,
+                position.checkin_count,
+                position.missing_duties,
+            ])
+        
+        return response
     
     def get_queryset(self):
         # Get all order positions for this event that are eligible for checkin-list with ID 3
