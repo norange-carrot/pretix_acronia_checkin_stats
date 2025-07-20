@@ -24,13 +24,19 @@ msgid "Summary"
 msgstr "Zusammenfassung"
 
 msgid "Total persons in check-in list:"
-msgstr "Gesamtzahl Personen mit Check-ins:"
+msgstr "Gesamtzahl Personen in Check-in Liste:"
 
 msgid "Total check-ins:"
 msgstr "Gesamtzahl Check-ins:"
 
 msgid "Multiple check-ins:"
 msgstr "Mehrfache Check-ins:"
+
+msgid "Tickets with completed duties:"
+msgstr "Tickets mit vollständigen Diensten:"
+
+msgid "Tickets with missing duties:"
+msgstr "Tickets mit fehlenden Diensten:"
 
 msgid "Check-ins per Person"
 msgstr "Check-ins pro Person"
