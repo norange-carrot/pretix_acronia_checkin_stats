@@ -10,22 +10,32 @@ def control_nav_import(sender, request=None, **kwargs):
     Add navigation entry for checkin statistics in the event control panel.
     """
     url = resolve(request.path_info)
-    if not request.user.has_event_permission(request.organizer, request.event, 'can_view_orders'):
+    if not request.user.has_event_permission(
+        request.organizer, request.event, "can_view_orders"
+    ):
         return []
-    
+
     return [
         {
-            'label': _('Check-in Helper Statistics'),
-            'url': reverse('plugins:pretix_acronia_checkin_view:checkin_stats', kwargs={
-                'event': request.event.slug,
-                'organizer': request.organizer.slug,
-            }),
-            'parent': reverse('control:event.orders.checkinlists', kwargs={
-                'event': request.event.slug,
-                'organizer': request.organizer.slug,
-            }),
-            'active': (url.namespace == 'plugins:pretix_acronia_checkin_view' and
-                      url.url_name == 'checkin_stats'),
-            'icon': 'fa-bar-chart',
+            "label": _("Check-in Helper Statistics"),
+            "url": reverse(
+                "plugins:pretix_acronia_checkin_view:checkin_stats",
+                kwargs={
+                    "event": request.event.slug,
+                    "organizer": request.organizer.slug,
+                },
+            ),
+            "parent": reverse(
+                "control:event.orders.checkinlists",
+                kwargs={
+                    "event": request.event.slug,
+                    "organizer": request.organizer.slug,
+                },
+            ),
+            "active": (
+                url.namespace == "plugins:pretix_acronia_checkin_view"
+                and url.url_name == "checkin_stats"
+            ),
+            "icon": "fa-bar-chart",
         }
     ]

@@ -16,7 +16,9 @@ class PluginApp(PluginConfig):
     class PretixPluginMeta:
         name = gettext_lazy("Pretix Acronia Checkin View")
         author = "Nora Küchler"
-        description = gettext_lazy("Pretix plugin to create an extra view to check helper add-on check-ins")
+        description = gettext_lazy(
+            "Pretix plugin to create an extra view to check helper add-on check-ins"
+        )
         visible = True
         version = __version__
         category = "FEATURE"
