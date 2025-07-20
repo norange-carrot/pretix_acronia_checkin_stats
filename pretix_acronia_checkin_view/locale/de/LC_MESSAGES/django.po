@@ -23,7 +23,7 @@ msgstr "Check-in Helper Statistiken"
 msgid "Summary"
 msgstr "Zusammenfassung"
 
-msgid "Total persons with check-ins:"
+msgid "Total persons in check-in list:"
 msgstr "Gesamtzahl Personen mit Check-ins:"
 
 msgid "Total check-ins:"
