@@ -16,22 +16,24 @@ Features
 
 Installation
 ------------
+
 For developers, see the `Development setup`_ section below.
+
 1. Clone this repository into your pretix plugins directory
-   (usually `src/pretix/plugins/`).
-2. Add this to 'your setup.py' or `settings.py` file:
-   ```python
+   (usually ``src/pretix/plugins/``).
+2. Add this to your ``setup.py`` or ``settings.py`` file::
+
     setup(
         args...,
         entry_points="""
     [pretix.plugin]
-    pretix_paypal=pretix_paypal:PretixPluginMeta"
-)
-  ```python
-   (or add it to your `plugins` setting in `settings.py` if you are not using a setup.py file directly
+    pretix_acronia_checkin_view=pretix_acronia_checkin_view:PretixPluginMeta
+    """
+    )
+
 3. Start the server.
 4. Enable the plugin in your pretix installation
-5. The plugin will automatically appear in the event control panel navigation und "Check-In"
+5. The plugin will automatically appear in the event control panel navigation under "Check-In"
 
 Usage
 -----
@@ -44,7 +46,7 @@ Usage
 The page displays:
 
 * **Summary section**: Gives an overview of total number of tickets in the check-in list and number of tickets with completed or uncompleted duties
-* **Export functionality**: Export the current filtered data as CSV. If no fiters are chosen, it will export all data.
+* **Export functionality**: Export the current filtered data as CSV. If no filters are chosen, it will export all data.
 * **Search functionality**: Filter results by order code, attendee name, email, product name, number of missing duties and number of completed duties
 * **Detailed table**: Shows each person's check-in count with direct links to order details
 * **Visual indicators**: Different colored badges for missing vs. completed duties
