@@ -3,6 +3,13 @@ Pretix Acronia Check-in View
 
 This is a plugin for `pretix`_ that creates an extra page under "Check-In" in the pretix admin frontend to show the number of check-ins per product/person compared to the number of booked helper add-ons.
 
+.. image:: docs/helper_duty_overview.png
+   :alt: Check-in Helper Statistics Screenshot
+   :width: 800px
+   :align: center
+
+*Screenshot showing the Check-in Helper Statistics page with summary and detailed view*
+
 Features
 --------
 
