@@ -1,40 +1,53 @@
 Pretix Acronia Check-in View
 ============================
 
-This is a plugin for `pretix`_ that creates an extra page under "checkins" in the pretix admin frontend to show the number of check-ins per person.
+This is a plugin for `pretix`_ that creates an extra page under "Check-In" in the pretix admin frontend to show the number of check-ins per product/person compared to the number of booked helper add-ons.
 
 Features
 --------
 
 * Display check-in statistics for each order position/person
-* Summary statistics showing total persons with check-ins and total check-ins
-* Highlight persons with multiple check-ins
-* Search functionality to filter by order code, attendee name, email, or product
+* Summary statistics giving an overview of missing and completed duties
+* Search functionality to filter by order code, attendee name, email, product, or number of missing/completed duties
 * Pagination for large events
-* Direct links to order and position details
+* Direct links to order details
+* Export functionality to export the current filtered data as CSV
 * Fully localized in German and English
 
 Installation
 ------------
-
-1. Install the plugin from the pretix marketplace or manually
-2. Enable the plugin in your pretix installation
-3. The plugin will automatically appear in the event control panel navigation
+For developers, see the `Development setup`_ section below.
+1. Clone this repository into your pretix plugins directory
+   (usually `src/pretix/plugins/`).
+2. Add this to 'your setup.py' or `settings.py` file:
+   ```python
+    setup(
+        args...,
+        entry_points="""
+    [pretix.plugin]
+    pretix_paypal=pretix_paypal:PretixPluginMeta"
+)
+  ```python
+   (or add it to your `plugins` setting in `settings.py` if you are not using a setup.py file directly
+3. Start the server.
+4. Enable the plugin in your pretix installation
+5. The plugin will automatically appear in the event control panel navigation und "Check-In"
 
 Usage
 -----
 
 1. Navigate to your event in the pretix admin interface
-2. Go to "Orders" → "Check-ins" 
-3. You will see a new "Check-in Statistics" option in the navigation
-4. Click on it to view the check-in statistics for your event
+2. Go to "Check-In"
+3. You will see a new "Check-in Helper Statistics" menu item in the navigation
+4. Click on it to view the check-in statistics for the event
 
 The page displays:
 
-* **Summary section**: Total persons with check-ins, total check-ins, and persons with multiple check-ins
-* **Search functionality**: Filter results by order code, attendee name, email, or product name
+* **Summary section**: Gives an overview of total number of tickets in the check-in list and number of tickets with completed or uncompleted duties
+* **Export functionality**: Export the current filtered data as CSV. If no fiters are chosen, it will export all data.
+* **Search functionality**: Filter results by order code, attendee name, email, product name, number of missing duties and number of completed duties
 * **Detailed table**: Shows each person's check-in count with direct links to order details
-* **Visual indicators**: Different colored badges for single vs. multiple check-ins
+* **Visual indicators**: Different colored badges for missing vs. completed duties
 
 Development setup
 -----------------
@@ -76,11 +89,6 @@ License
 Copyright 2025 Nora Küchler
 
 Released under the terms of the proprietary pretix Enterprise license.
-
-.. _pretix: https://github.com/pretix/pretix
-.. _pretix development setup: https://docs.pretix.eu/en/latest/development/setup.html
-
-
 
 .. _pretix: https://github.com/pretix/pretix
 .. _pretix development setup: https://docs.pretix.eu/en/latest/development/setup.html
