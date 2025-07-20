@@ -1,0 +1,49 @@
+{% extends "pretixcontrol/event/base.html" %}
+{% load i18n %}
+{% load bootstrap3 %}
+
+{% block title %}{% trans "Check-in Helper Statistics" %} :: {% endblock %}
+
+{% block content %}
+    <h1>{% trans "Check-in Helper Statistics" %}</h1>
+    
+    {% include "pretix_acronia_checkin_view/partials/summary_stats.html" %}
+    {% include "pretix_acronia_checkin_view/partials/checkin_table.html" %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.stat-box {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+}
+
+.badge-warning {
+    background-color: #f0ad4e;
+}
+
+.badge-success {
+    background-color: #5cb85c;
+}
+
+.badge-info {
+    background-color: #5bc0de;
+}
+
+.table tr.warning {
+    background-color: #fcf8e3;
+}
+
+.form-inline .form-group {
+    margin-right: 10px;
+}
+
+.pagination {
+    margin: 20px 0;
+}
+</style>
+{% endblock %}

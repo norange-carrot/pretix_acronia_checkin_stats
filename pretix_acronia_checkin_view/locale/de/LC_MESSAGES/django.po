@@ -17,9 +17,6 @@ msgstr "Pretix Acronia Check-in Ansicht"
 msgid "Pretix plugin to create an extra view to check helper add-on check-ins"
 msgstr "Pretix Plugin zur Erstellung einer zusätzlichen Ansicht für Helper Add-on Check-ins"
 
-msgid "Check-in Statistics"
-msgstr "Check-in Statistiken"
-
 msgid "Check-in Helper Statistics"
 msgstr "Check-in Helper Statistiken"
 
@@ -38,17 +35,20 @@ msgstr "Mehrfache Check-ins:"
 msgid "Check-ins per Person"
 msgstr "Check-ins pro Person"
 
+msgid "Export as CSV"
+msgstr "Als CSV exportieren"
+
 msgid "Search"
 msgstr "Suchen"
 
 msgid "Search by order, name, email, or product..."
 msgstr "Suche nach Bestellung, Name, E-Mail oder Produkt..."
 
-msgid "Clear"
-msgstr "Zurücksetzen"
-
 msgid "Filter"
 msgstr "Filtern"
+
+msgid "Clear"
+msgstr "Zurücksetzen"
 
 msgid "All duties"
 msgstr "Alle Dienste"
@@ -71,29 +71,8 @@ msgstr "Keine Check-ins"
 msgid "At least one check-in"
 msgstr "Mindestens ein Check-in"
 
-msgid "Filters applied"
-msgstr "Filter angewendet"
-
-msgid "Showing results for \"%s\""
-msgstr "Zeige Ergebnisse für \"%s\""
-
-msgid "Export as CSV"
-msgstr "Als CSV exportieren"
-
-msgid "Order Code"
-msgstr "Bestellcode"
-
-msgid "Variation"
-msgstr "Variante"
-
-msgid "Booked Addons"
-msgstr "Gebuchte Add-ons"
-
 msgid "Order"
 msgstr "Bestellung"
-
-msgid "Position"
-msgstr "Position"
 
 msgid "Product"
 msgstr "Produkt"
@@ -104,26 +83,14 @@ msgstr "Teilnehmername"
 msgid "Email"
 msgstr "E-Mail"
 
-msgid "Check-ins"
-msgstr "Check-ins"
-
 msgid "Booked"
 msgstr "Gebucht"
 
+msgid "Check-ins"
+msgstr "Check-ins"
+
 msgid "Missing helper duties"
 msgstr "Fehlende Helferdienste"
-
-msgid "Missing duties"
-msgstr "Fehlende Dienste"
-
-msgid "Extra check-ins"
-msgstr "Zusätzliche Check-ins"
-
-msgid "Complete"
-msgstr "Vollständig"
-
-msgid "Actions"
-msgstr "Aktionen"
 
 msgid "No name provided"
 msgstr "Kein Name angegeben"
@@ -137,11 +104,14 @@ msgstr "Mehrfache Check-ins erkannt"
 msgid "Single check-in"
 msgstr "Einzelner Check-in"
 
-msgid "View Details"
-msgstr "Details anzeigen"
+msgid "Missing duties"
+msgstr "Fehlende Dienste"
 
-msgid "Page navigation"
-msgstr "Seitennavigation"
+msgid "Extra check-ins"
+msgstr "Zusätzliche Check-ins"
+
+msgid "Complete"
+msgstr "Vollständig"
 
 msgid "Previous"
 msgstr "Zurück"
@@ -149,8 +119,23 @@ msgstr "Zurück"
 msgid "Next"
 msgstr "Weiter"
 
+msgid "Page navigation"
+msgstr "Seitennavigation"
+
 msgid "No check-ins found matching your search criteria."
 msgstr "Keine Check-ins gefunden, die Ihren Suchkriterien entsprechen."
 
 msgid "No check-ins found for this event yet."
 msgstr "Noch keine Check-ins für diese Veranstaltung gefunden."
+
+msgid "Order Code"
+msgstr "Bestellcode"
+
+msgid "Variation"
+msgstr "Variante"
+
+msgid "Booked Addons"
+msgstr "Gebuchte Add-ons"
+
+msgid "Missing Helper Duties"
+msgstr "Fehlende Helferdienste"

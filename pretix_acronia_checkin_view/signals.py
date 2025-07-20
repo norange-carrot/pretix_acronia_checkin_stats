@@ -5,15 +5,18 @@ from pretix.control.signals import nav_event
 
 
 @receiver(nav_event, dispatch_uid="acronia_checkin_view_nav")
-def control_nav_import(sender, request=None, **kwargs):
-    """
-    Add navigation entry for checkin statistics in the event control panel.
-    """
-    url = resolve(request.path_info)
+def add_checkin_stats_navigation(sender, request=None, **kwargs):
+    """Add navigation entry for checkin statistics in the event control panel."""
     if not request.user.has_event_permission(
         request.organizer, request.event, "can_view_orders"
     ):
         return []
+
+    url = resolve(request.path_info)
+    is_active = (
+        url.namespace == "plugins:pretix_acronia_checkin_view"
+        and url.url_name == "checkin_stats"
+    )
 
     return [
         {
@@ -32,10 +35,7 @@ def control_nav_import(sender, request=None, **kwargs):
                     "organizer": request.organizer.slug,
                 },
             ),
-            "active": (
-                url.namespace == "plugins:pretix_acronia_checkin_view"
-                and url.url_name == "checkin_stats"
-            ),
+            "active": is_active,
             "icon": "fa-bar-chart",
         }
     ]

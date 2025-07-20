@@ -7,6 +7,7 @@
 {% block content %}
     <h1>{% trans "Check-in Helper Statistics" %}</h1>
     
+    <!-- ===== SUMMARY STATISTICS SECTION ===== -->
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-default">
@@ -39,6 +40,7 @@
         </div>
     </div>
 
+    <!-- ===== CHECKIN TABLE SECTION ===== -->
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-default">
@@ -46,6 +48,7 @@
                     <h3 class="panel-title">{% trans "Check-ins per Person" %}</h3>
                 </div>
                 <div class="panel-body">
+                    
                     <!-- Export Button -->
                     <div class="row" style="margin-bottom: 15px;">
                         <div class="col-md-12 text-right">
@@ -56,10 +59,11 @@
                         </div>
                     </div>
                     
-                    <!-- Search and Filter form -->
+                    <!-- Search and Filter Form -->
                     <div class="row">
                         <div class="col-md-8">
                             <form method="get" class="form-inline">
+                                <!-- Search Input -->
                                 <div class="form-group">
                                     <label for="search" class="sr-only">{% trans "Search" %}</label>
                                     <input type="text" class="form-control" id="search" name="search" 
@@ -67,25 +71,36 @@
                                            value="{{ search_query }}" style="width: 250px;">
                                 </div>
                                 
-                                <!-- Filter by Missing Duties -->
+                                <!-- Missing Duties Filter -->
                                 <div class="form-group">
                                     <select name="missing_filter" class="form-control">
                                         <option value="">{% trans "All duties" %}</option>
-                                        <option value="missing" {% if missing_filter == 'missing' %}selected{% endif %}>{% trans "Missing duties only" %}</option>
-                                        <option value="complete" {% if missing_filter == 'complete' %}selected{% endif %}>{% trans "Complete only" %}</option>
-                                        <option value="extra" {% if missing_filter == 'extra' %}selected{% endif %}>{% trans "Extra check-ins only" %}</option>
+                                        <option value="missing" {% if missing_filter == 'missing' %}selected{% endif %}>
+                                            {% trans "Missing duties only" %}
+                                        </option>
+                                        <option value="complete" {% if missing_filter == 'complete' %}selected{% endif %}>
+                                            {% trans "Complete only" %}
+                                        </option>
+                                        <option value="extra" {% if missing_filter == 'extra' %}selected{% endif %}>
+                                            {% trans "Extra check-ins only" %}
+                                        </option>
                                     </select>
                                 </div>
                                 
-                                <!-- Filter by Check-in Status -->
+                                <!-- Check-in Status Filter -->
                                 <div class="form-group">
                                     <select name="checkin_filter" class="form-control">
                                         <option value="">{% trans "All check-ins" %}</option>
-                                        <option value="none" {% if checkin_filter == 'none' %}selected{% endif %}>{% trans "No check-ins" %}</option>
-                                        <option value="at_least_one" {% if checkin_filter == 'at_least_one' %}selected{% endif %}>{% trans "At least one check-in" %}</option>
+                                        <option value="none" {% if checkin_filter == 'none' %}selected{% endif %}>
+                                            {% trans "No check-ins" %}
+                                        </option>
+                                        <option value="at_least_one" {% if checkin_filter == 'at_least_one' %}selected{% endif %}>
+                                            {% trans "At least one check-in" %}
+                                        </option>
                                     </select>
                                 </div>
                                 
+                                <!-- Action Buttons -->
                                 <button type="submit" class="btn btn-default">
                                     <i class="fa fa-search"></i> {% trans "Filter" %}
                                 </button>
@@ -96,6 +111,8 @@
                                 {% endif %}
                             </form>
                         </div>
+                        
+                        <!-- Filter Status Display -->
                         <div class="col-md-4 text-right">
                             {% if search_query or missing_filter or checkin_filter %}
                                 <small class="text-muted">
@@ -112,7 +129,9 @@
                     
                     <hr>
                     
+                    <!-- Data Table or Empty State -->
                     {% if stats %}
+                        <!-- Data Table -->
                         <div class="table-responsive">
                             <table class="table table-striped table-hover">
                                 <thead>
@@ -183,7 +202,8 @@
                                 <ul class="pagination">
                                     {% if page_obj.has_previous %}
                                         <li>
-                                            <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if missing_filter %}&missing_filter={{ missing_filter }}{% endif %}{% if checkin_filter %}&checkin_filter={{ checkin_filter }}{% endif %}" aria-label="{% trans 'Previous' %}">
+                                            <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if missing_filter %}&missing_filter={{ missing_filter }}{% endif %}{% if checkin_filter %}&checkin_filter={{ checkin_filter }}{% endif %}" 
+                                               aria-label="{% trans 'Previous' %}">
                                                 <span aria-hidden="true">&laquo;</span>
                                             </a>
                                         </li>
@@ -193,13 +213,18 @@
                                         {% if page_obj.number == num %}
                                             <li class="active"><span>{{ num }}</span></li>
                                         {% else %}
-                                            <li><a href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if missing_filter %}&missing_filter={{ missing_filter }}{% endif %}{% if checkin_filter %}&checkin_filter={{ checkin_filter }}{% endif %}">{{ num }}</a></li>
+                                            <li>
+                                                <a href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if missing_filter %}&missing_filter={{ missing_filter }}{% endif %}{% if checkin_filter %}&checkin_filter={{ checkin_filter }}{% endif %}">
+                                                    {{ num }}
+                                                </a>
+                                            </li>
                                         {% endif %}
                                     {% endfor %}
                                     
                                     {% if page_obj.has_next %}
                                         <li>
-                                            <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if missing_filter %}&missing_filter={{ missing_filter }}{% endif %}{% if checkin_filter %}&checkin_filter={{ checkin_filter }}{% endif %}" aria-label="{% trans 'Next' %}">
+                                            <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if missing_filter %}&missing_filter={{ missing_filter }}{% endif %}{% if checkin_filter %}&checkin_filter={{ checkin_filter }}{% endif %}" 
+                                               aria-label="{% trans 'Next' %}">
                                                 <span aria-hidden="true">&raquo;</span>
                                             </a>
                                         </li>
@@ -207,7 +232,9 @@
                                 </ul>
                             </nav>
                         {% endif %}
+                        
                     {% else %}
+                        <!-- Empty State -->
                         <div class="alert alert-info">
                             {% if search_query %}
                                 {% trans "No check-ins found matching your search criteria." %}

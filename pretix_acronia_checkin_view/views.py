@@ -3,15 +3,15 @@ from django.db.models import Count, F, Q
 from django.http import HttpResponse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView
-from pretix.base.models import OrderPosition
+from pretix.base.models import CheckinList, OrderPosition
 from pretix.control.views.event import EventPermissionRequiredMixin
 
 
 class CheckinStatsView(EventPermissionRequiredMixin, ListView):
-    """
-    View to display checkin statistics per person.
-    Shows the number of checkins for each order position/person.
-    """
+    """View to display checkin statistics for helper addon products."""
+
+    CHECKIN_LIST_ID = 3
+    ADDON_PRODUCT_IDS = [4, 7]
 
     template_name = "pretix_acronia_checkin_view/checkin_stats.html"
     context_object_name = "stats"
@@ -24,15 +24,38 @@ class CheckinStatsView(EventPermissionRequiredMixin, ListView):
             return self.export_csv()
         return super().get(request, *args, **kwargs)
 
+    def _get_csv_headers(self):
+        """Get CSV headers for export."""
+        return [
+            _("Order Code"),
+            _("Product"),
+            _("Variation"),
+            _("Attendee Name"),
+            _("Email"),
+            _("Booked Addons"),
+            _("Check-ins"),
+            _("Missing Helper Duties"),
+        ]
+
+    def _get_csv_row_data(self, position):
+        """Get CSV row data for a position."""
+        return [
+            position.order.code,
+            position.item.name,
+            position.variation.value if position.variation else "",
+            position.attendee_name or "",
+            position.attendee_email or "",
+            position.addon_count,
+            position.checkin_count,
+            position.missing_duties,
+        ]
+
     def export_csv(self):
         """Export the current filtered data as CSV."""
         # Get all data without pagination for export
         original_paginate_by = self.paginate_by
         self.paginate_by = None
-
         queryset = self.get_queryset()
-
-        # Restore pagination
         self.paginate_by = original_paginate_by
 
         # Create the HttpResponse object with CSV header
@@ -42,51 +65,26 @@ class CheckinStatsView(EventPermissionRequiredMixin, ListView):
         )
 
         writer = csv.writer(response)
-
-        # Write headers
-        writer.writerow(
-            [
-                _("Order Code"),
-                _("Product"),
-                _("Variation"),
-                _("Attendee Name"),
-                _("Email"),
-                _("Booked Addons"),
-                _("Check-ins"),
-                _("Missing Helper Duties"),
-            ]
-        )
+        writer.writerow(self._get_csv_headers())
 
         # Write data
         for position in queryset:
-            writer.writerow(
-                [
-                    position.order.code,
-                    position.item.name,
-                    position.variation.value if position.variation else "",
-                    position.attendee_name or "",
-                    position.attendee_email or "",
-                    position.addon_count,
-                    position.checkin_count,
-                    position.missing_duties,
-                ]
-            )
+            writer.writerow(self._get_csv_row_data(position))
 
         return response
 
-    def get_queryset(self):
-        # Get all order positions for this event that are eligible for checkin-list with ID 3
-        # Show all positions regardless of check-in status
-        from pretix.base.models import CheckinList
-
+    def _get_checkin_list(self):
+        """Get the checkin list for this view."""
         try:
-            checkin_list = CheckinList.objects.get(id=3, event=self.request.event)
+            return CheckinList.objects.get(
+                id=self.CHECKIN_LIST_ID, event=self.request.event
+            )
         except CheckinList.DoesNotExist:
-            # If checkin list doesn't exist, return empty queryset
-            return OrderPosition.objects.none()
+            return None
 
-        # Get all positions that match the checkin list criteria
-        queryset = (
+    def _get_base_queryset(self, checkin_list):
+        """Get the base queryset for order positions."""
+        return (
             OrderPosition.objects.filter(
                 order__event=self.request.event,
                 order__status__in=checkin_list.include_pending and ["p", "n"] or ["p"],
@@ -100,62 +98,94 @@ class CheckinStatsView(EventPermissionRequiredMixin, ListView):
             .prefetch_related("all_checkins", "addons")
             .annotate(
                 checkin_count=Count(
-                    "all_checkins", filter=Q(all_checkins__list_id=3), distinct=True
+                    "all_checkins",
+                    filter=Q(all_checkins__list_id=self.CHECKIN_LIST_ID),
+                    distinct=True,
                 ),
                 addon_count=Count(
-                    "addons", filter=Q(addons__item_id__in=[4, 7]), distinct=True
+                    "addons",
+                    filter=Q(addons__item_id__in=self.ADDON_PRODUCT_IDS),
+                    distinct=True,
                 ),
                 missing_duties=F("addon_count") - F("checkin_count"),
             )
             .order_by("-missing_duties", "order__code")
         )
 
-        # Filter by search query if provided
+    def _apply_search_filter(self, queryset, search):
+        """Apply search filter to queryset."""
+        return queryset.filter(
+            Q(order__code__icontains=search)
+            | Q(attendee_name_cached__icontains=search)
+            | Q(attendee_email__icontains=search)
+            | Q(item__name__icontains=search)
+        )
+
+    def _apply_missing_filter(self, queryset, missing_filter):
+        """Apply missing duties filter to queryset."""
+        filters = {
+            "missing": Q(missing_duties__gt=0),
+            "complete": Q(missing_duties=0),
+            "extra": Q(missing_duties__lt=0),
+        }
+        if missing_filter in filters:
+            return queryset.filter(filters[missing_filter])
+        return queryset
+
+    def _apply_checkin_filter(self, queryset, checkin_filter):
+        """Apply check-in status filter to queryset."""
+        filters = {
+            "none": Q(checkin_count=0),
+            "at_least_one": Q(checkin_count__gt=0),
+        }
+        if checkin_filter in filters:
+            return queryset.filter(filters[checkin_filter])
+        return queryset
+
+    def get_queryset(self):
+        """Get filtered queryset for order positions."""
+        checkin_list = self._get_checkin_list()
+        if not checkin_list:
+            return OrderPosition.objects.none()
+
+        queryset = self._get_base_queryset(checkin_list)
+
+        # Apply filters
         search = self.request.GET.get("search", "").strip()
         if search:
-            queryset = queryset.filter(
-                Q(order__code__icontains=search)
-                | Q(attendee_name_cached__icontains=search)
-                | Q(attendee_email__icontains=search)
-                | Q(item__name__icontains=search)
-            )
+            queryset = self._apply_search_filter(queryset, search)
 
-        # Filter by missing duties status
         missing_filter = self.request.GET.get("missing_filter", "")
-        if missing_filter == "missing":
-            queryset = queryset.filter(missing_duties__gt=0)
-        elif missing_filter == "complete":
-            queryset = queryset.filter(missing_duties=0)
-        elif missing_filter == "extra":
-            queryset = queryset.filter(missing_duties__lt=0)
+        queryset = self._apply_missing_filter(queryset, missing_filter)
 
-        # Filter by check-in status
         checkin_filter = self.request.GET.get("checkin_filter", "")
-        if checkin_filter == "none":
-            queryset = queryset.filter(checkin_count=0)
-        elif checkin_filter == "at_least_one":
-            queryset = queryset.filter(checkin_count__gt=0)
+        queryset = self._apply_checkin_filter(queryset, checkin_filter)
 
         return queryset
 
+    def _calculate_statistics(self, all_positions):
+        """Calculate statistics from all positions."""
+        total_positions = all_positions.count()
+        total_checkins = sum(pos.checkin_count for pos in all_positions)
+        multiple_checkins = all_positions.filter(checkin_count__gt=1).count()
+
+        return {
+            "total_positions": total_positions,
+            "total_checkins": total_checkins,
+            "multiple_checkins": multiple_checkins,
+        }
+
     def get_context_data(self, **kwargs):
+        """Add additional context data."""
         context = super().get_context_data(**kwargs)
 
         # Calculate statistics for all matching positions (not just current page)
         all_positions = self.get_queryset()
-        total_positions = all_positions.count()
-
-        # Calculate total checkins
-        total_checkins = sum(pos.checkin_count for pos in all_positions)
-
-        # Find positions with multiple checkins
-        multiple_checkins = all_positions.filter(checkin_count__gt=1).count()
+        statistics = self._calculate_statistics(all_positions)
 
         context.update(
             {
-                "total_positions": total_positions,
-                "total_checkins": total_checkins,
-                "multiple_checkins": multiple_checkins,
+                **statistics,
                 "event": self.request.event,
                 "search_query": self.request.GET.get("search", ""),
                 "missing_filter": self.request.GET.get("missing_filter", ""),
