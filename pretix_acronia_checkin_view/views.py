@@ -10,8 +10,8 @@ from pretix.control.views.event import EventPermissionRequiredMixin
 class CheckinStatsView(EventPermissionRequiredMixin, ListView):
     """View to display checkin statistics for helper addon products."""
 
-    CHECKIN_LIST_ID = 3
-    ADDON_PRODUCT_IDS = [4, 7]
+    CHECKIN_LIST_ID = 17
+    ADDON_PRODUCT_IDS = [624, 572]
 
     template_name = "pretix_acronia_checkin_view/checkin_stats.html"
     context_object_name = "stats"
