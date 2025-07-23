@@ -1,5 +1,6 @@
 recursive-include pretix_acronia_checkin_view/static *
 recursive-include pretix_acronia_checkin_view/templates *
 recursive-include pretix_acronia_checkin_view/locale *
+recursive-include docs *.png
 include LICENSE
 exclude .gitlab-ci.yml
