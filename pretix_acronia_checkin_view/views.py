@@ -99,7 +99,10 @@ class CheckinStatsView(EventPermissionRequiredMixin, ListView):
             .annotate(
                 checkin_count=Count(
                     "all_checkins",
-                    filter=Q(all_checkins__list_id=self.CHECKIN_LIST_ID),
+                    filter=Q(
+                        all_checkins__list_id=self.CHECKIN_LIST_ID,
+                        all_checkins__successful=True,
+                    ),
                     distinct=True,
                 ),
                 addon_count=Count(
