@@ -104,7 +104,10 @@ class CheckinStatsView(EventPermissionRequiredMixin, ListView):
                 ),
                 addon_count=Count(
                     "addons",
-                    filter=Q(addons__item_id__in=self.ADDON_PRODUCT_IDS),
+                    filter=Q(
+                        addons__item_id__in=self.ADDON_PRODUCT_IDS,
+                        addons__canceled=False,
+                    ),
                     distinct=True,
                 ),
                 missing_duties=F("addon_count") - F("checkin_count"),
